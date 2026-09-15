@@ -6,9 +6,9 @@ O que sai:
   e o site nao depende das URLs do TikTok, que expiram em ~1 dia.
 - busca.json: [id, usuario, nome normalizado, shard, posicao no shard]
 - meta.json: totais, para o site saber quantos blocos existem
-- videos.json: lista montada a partir do que existir em public/videos (dia-NN.mp4 / dia-NN.jpg)
 
 dias.json nao e gerado aqui: e editado a mao em public/data/dias.json.
+videos.json tambem nao: e gerado por scripts/gerar_videos.py.
 
 Por padrao ficam de fora os comentarios que so aparecem no TikTok Studio (source == "studio"):
 o TikTok os esconde do publico por algum motivo que nao sabemos, e o site e publico.
@@ -178,29 +178,14 @@ def main():
         {"totalComentarios": total, "totalShards": n_shard, "tamanhoShard": a.tamanho_shard},
     )
 
-    # videos.json reflete o que estiver de fato em public/videos.
-    dir_videos = os.path.join(a.publico, "videos")
-    videos = []
-    if os.path.isdir(dir_videos):
-        for f in sorted(os.listdir(dir_videos)):
-            m = re.fullmatch(r"dia-(\d+)\.mp4", f)
-            if not m:
-                continue
-            dia = int(m.group(1))
-            poster = f"dia-{m.group(1)}.jpg"
-            videos.append({
-                "dia": dia,
-                "src": f"/videos/{f}",
-                "poster": f"/videos/{poster}" if os.path.exists(os.path.join(dir_videos, poster)) else "",
-            })
-    gravar_json(os.path.join(dir_dados, "videos.json"), videos)
+    # videos.json nao e gerado aqui: scripts/gerar_videos.py cuida dele (precisa do formato de cada video).
 
     tamanho_total = sum(
         os.path.getsize(os.path.join(raiz, f)) for raiz, _, fs in os.walk(dir_dados) for f in fs
     )
     print(f"comentarios publicados: {total} (fora, so do Studio: {fora_studio})")
     print(f"blocos: {n_shard} | maior bloco: {maior_shard / 1024:.0f} KB | total em data/: {tamanho_total / 1e6:.1f} MB")
-    print(f"sem avatar: {sem_avatar} | com figurinha: {com_figurinha} | videos: {len(videos)}")
+    print(f"sem avatar: {sem_avatar} | com figurinha: {com_figurinha}")
     print(f"busca.json: {os.path.getsize(os.path.join(dir_dados, 'busca.json')) / 1024:.0f} KB")
 
 
