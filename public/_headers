@@ -1,0 +1,14 @@
+# O site fica em outro domínio (Lovable), então os dados precisam liberar o acesso (CORS).
+/data/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=300
+  X-Robots-Tag: noindex
+
+/videos/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400
+  X-Robots-Tag: noindex
+
+# Nada deste domínio deve aparecer no Google.
+/*
+  X-Robots-Tag: noindex
